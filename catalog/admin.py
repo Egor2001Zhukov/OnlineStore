@@ -1,3 +1,21 @@
 from django.contrib import admin
 
-# Register your models here.
+from catalog.models import Products, Category, Contacts
+
+
+@admin.register(Products)
+class ProductsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'price', 'category')
+    list_filter = ('category',)
+    search_fields = ('title', 'description')
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title',)
+    list_filter = ('title',)
+
+
+@admin.register(Contacts)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('company_name', 'number', 'email', 'office')
