@@ -1,61 +1,32 @@
 {% extends 'catalog/base.html' %}
 
+{% load my_tags %}
 {% block content %}
-<div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-    <h1 class="display-4 fw-normal text-body-emphasis">Главная</h1>
-    <p class="fs-5 text-body-secondary">Вы находитесь на сайте предназначенном для продажи товаров.</p>
-    <div class="row row-cols-3 justify-content-md-center mt-5">
-        <div class="col">
-            <div class="card mb-4 rounded-3 shadow-sm">
-                <div class="card-header py-3">
-                    <h4 class="my-0 fw-normal">Товар 1</h4>
+    <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+        <h1 class="display-4 fw-normal text-body-emphasis">Главная</h1>
+        <p class="fs-5 text-body-secondary">Вы находитесь на сайте предназначенном для продажи товаров.</p>
+        <div class="row row-cols-3 justify-content-md-center mt-5">
+            {% for product in products %}
+                <div class="col">
+                    <div class="card mb-4 rounded-3 shadow-sm">
+                        <div class="card-header py-3">
+                            <a href="{% url 'catalog:product' product_id=product.pk %}">
+                                <h4 class="my-0 fw-normal">{{ product.title }}</h4>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <h1 class="card-title pricing-card-title">{{ product.price }} рублёв</h1>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li>{{ product.category }}</li>
+                                <li><img src="{{ product.img|mediapath }}" class="img-fluid" style="height: 200px"
+                                         alt="{{ product.title }}"</li>
+                                <li>{{ product.description }}</li>
+                            </ul>
+                            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Купить</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$100</h1>
-                    <ul class="list-unstyled mt-3 mb-4">
-                        <li>10 users included</li>
-                        <li>2 GB of storage</li>
-                        <li>Email support</li>
-                        <li>Help center access</li>
-                    </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-outline-primary">Купить</button>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card mb-4 rounded-3 shadow-sm">
-                <div class="card-header py-3">
-                    <h4 class="my-0 fw-normal">Товар 1</h4>
-                </div>
-                <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$100</h1>
-                    <ul class="list-unstyled mt-3 mb-4">
-                        <li>10 users included</li>
-                        <li>2 GB of storage</li>
-                        <li>Email support</li>
-                        <li>Help center access</li>
-                    </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-outline-primary">Купить</button>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card mb-4 rounded-3 shadow-sm">
-                <div class="card-header py-3">
-                    <h4 class="my-0 fw-normal">Товар 1</h4>
-                </div>
-                <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$100</h1>
-                    <ul class="list-unstyled mt-3 mb-4">
-                        <li>10 users included</li>
-                        <li>2 GB of storage</li>
-                        <li>Email support</li>
-                        <li>Help center access</li>
-                    </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-outline-primary">Купить</button>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
-</div>
 {% endblock %}

@@ -4,8 +4,14 @@ from catalog.models import Products, Contacts
 
 
 def home(request):
-    print(list(Products.objects.all().order_by('date_of_create'))[-6:])
-    return render(request, 'catalog/home.html')
+    products = Products.objects.all()
+    context = {
+        'products': products,
+        'contacts_active': 'text-white',
+        'home_active': 'active',
+        'category_active': 'text-white',
+    }
+    return render(request, 'catalog/home.html', context)
 
 
 def contacts(request):
@@ -17,6 +23,20 @@ def contacts(request):
 
     contact = Contacts.objects.get(pk=1)
     context = {
-        'contact': contact
+        'contact': contact,
+        'contacts_active': 'active',
+        'home_active': 'text-white',
+        'category_active': 'text-white',
     }
     return render(request, 'catalog/contacts.html', context)
+
+
+def product(request, product_id):
+    product = Products.objects.get(pk=product_id)
+    context = {
+        'product': product,
+        'contacts_active': 'text-white',
+        'home_active': 'text-white',
+        'category_active': 'active',
+    }
+    return render(request, 'catalog/product.html', context)

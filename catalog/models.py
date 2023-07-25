@@ -18,7 +18,7 @@ class Category(models.Model):
 class Products(models.Model):
     title = models.CharField(max_length=100, verbose_name='Наименование')
     description = models.TextField(null=True, blank=True, verbose_name='Описание')
-    img = models.ImageField(null=True, blank=True, verbose_name='Изображение')
+    img = models.ImageField(null=True, blank=True, verbose_name='Изображение', upload_to='images/')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
     price = models.IntegerField(verbose_name='Цена')
     date_of_create = models.DateTimeField(default=django.utils.timezone.now, verbose_name='Дата создания')
