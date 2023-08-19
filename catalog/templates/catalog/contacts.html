@@ -35,10 +35,10 @@
     </div>
     <div class="col-4 mt-5">
         <h3>Наши контакты</h3>
-        <p>{{ contact.Company_name }}</p>
-        <p>Наш номер телефона: {{ contact.number }}</p>
-        <p>Наш email: {{ contact.email }}</p>
-        <p>Адрес офиса: {{ contact.office }}</p>
+        <p>{{ object.Company_name }}</p>
+        <p>Наш номер телефона: <b>{{ object.number }}</b></p>
+        <p>Наш email: <b>{{ object.email }}</b></p>
+        <p>Адрес офиса: <b>{{ object.office }}</b></p>
     </div>
 </div>
 {% endblock %}

@@ -8,7 +8,7 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
-            <a href="{% url 'catalog:home' %}" class="nav-link {{ home_active }}" aria-current="page">
+            <a href="{% url 'catalog:home' %}" class="nav-link" aria-current="page">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-bag-check-fill" viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
@@ -18,7 +18,7 @@
             </a>
         </li>
         <li>
-            <a href="#" class="nav-link {{ category_active }}">
+            <a href="#" class="nav-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-bag-check-fill" viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
@@ -28,7 +28,7 @@
             </a>
         </li>
         <li>
-            <a href="#" class="nav-link text-white">
+            <a href="#" class="nav-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-bag-check-fill" viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
@@ -38,13 +38,23 @@
             </a>
         </li>
         <li>
-            <a href="{% url 'catalog:contacts' %}" class="nav-link {{ contacts_active }}">
+            <a href="{% url 'catalog:contacts' %}" class="nav-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-bag-check-fill" viewBox="0 0 16 16">
                     <path fill-rule="evenodd"
                           d="M10.5 3.5a2.5 2.5 0 0 0-5 0V4h5v-.5zm1 0V4H15v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4h3.5v-.5a3.5 3.5 0 1 1 7 0zm-.646 5.354a.5.5 0 0 0-.708-.708L7.5 10.793 6.354 9.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"></path>
                 </svg>
                 Контакты
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'catalog:blog' %}" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-bag-check-fill" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                          d="M10.5 3.5a2.5 2.5 0 0 0-5 0V4h5v-.5zm1 0V4H15v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4h3.5v-.5a3.5 3.5 0 1 1 7 0zm-.646 5.354a.5.5 0 0 0-.708-.708L7.5 10.793 6.354 9.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"></path>
+                </svg>
+                Блог
             </a>
         </li>
     </ul>
@@ -65,3 +75,15 @@
         </ul>
     </div>
 </div>
+<script>
+    // Получаем текущий URL
+    let currentUrl = window.location.pathname;
+
+    // Ищем пункты меню, у которых ссылка совпадает с текущим URL
+    let menuLinks = document.querySelectorAll('.nav-link');
+    menuLinks.forEach(function (link) {
+        if (link.getAttribute('href') === currentUrl) {
+            link.classList.add('active');
+        } else link.classList.add('text-white');
+    });
+</script>

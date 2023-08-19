@@ -3,12 +3,12 @@
 {% load my_tags %}
 {% block content %}
     <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-        <h1 class="display-4 fw-normal text-body-emphasis">{{ product.title }}</h1>
-        <p class="fs-5 text-body-secondary">{{ product.category }}</p>
-        <p class="fs-5 text-body-secondary">{{ product.description }}</p>
-        <img src="{% mediapath product.img %}" class="img-fluid" style="height: 200px" alt="Банан">
+        <h1 class="display-4 fw-normal text-body-emphasis">{{ object.title }}</h1>
+        <p class="fs-5 text-body-secondary">{{ object.category }}</p>
+        <p class="fs-5 text-body-secondary">{{ object.description }}</p>
+        <img src="{% mediapath object.img %}" class="img-fluid" style="height: 200px" alt="Банан">
         <p class="fs-5 text-danger">Как первая любовь</p>
-        <p class="fs-5 text-body-secondary text-bg-info">Всего {{ product.price }} рублёв</p></div>
+        <p class="fs-5 text-body-secondary text-bg-info">Всего {{ object.price }} рублёв</p></div>
 
 
 {% endblock %}
