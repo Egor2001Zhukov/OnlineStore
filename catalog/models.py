@@ -21,8 +21,8 @@ class Products(models.Model):
     img = models.ImageField(null=True, blank=True, verbose_name='Изображение', upload_to='images/')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
     price = models.IntegerField(verbose_name='Цена')
-    date_of_create = models.DateTimeField(default=django.utils.timezone.now, verbose_name='Дата создания')
-    date_of_last_change = models.DateTimeField(verbose_name='Дата последнего изменения')
+    date_of_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    date_of_last_change = models.DateTimeField(auto_now=True, verbose_name='Дата последнего изменения')
 
     def __str__(self):
         return f'{self.title} {self.price}'
@@ -62,3 +62,16 @@ class BlogEntry(models.Model):
         verbose_name = 'запись блога'
         verbose_name_plural = 'записи блога'
 
+
+class ProductVersion(models.Model):
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, verbose_name='Версия продукта')
+    version = models.IntegerField(verbose_name='Номер версии')
+    version_name = models.CharField(max_length=150, verbose_name='Название версии')
+    is_сurrent_version = models.BooleanField(verbose_name='Текущая версия')
+
+    def __str__(self):
+        return f'{self.version_name}'
+
+    class Meta:
+        verbose_name = 'версия продукта'
+        verbose_name_plural = 'версии продукта'

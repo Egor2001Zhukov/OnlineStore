@@ -11,9 +11,11 @@
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Подтвердить</button>
                 {% if form.errors %}
-                    {% for er in form.errors %}
-                        <div class="alert alert-danger"> {{ er }}</div>
-                    {% endfor %}
+                    <p>
+                    <div class="alert alert-danger">
+                        {{ form.errors }}
+                    </div>
+                    </p>
                 {% endif %}
             </form>
         </div>
