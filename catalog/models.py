@@ -2,6 +2,8 @@ import django
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
+from user.models import User
+
 
 class Category(models.Model):
     title = models.CharField(max_length=100, verbose_name='Наименование')
@@ -23,6 +25,7 @@ class Products(models.Model):
     price = models.IntegerField(verbose_name='Цена')
     date_of_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     date_of_last_change = models.DateTimeField(auto_now=True, verbose_name='Дата последнего изменения')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Версия продукта', null=True, blank=True)
 
     def __str__(self):
         return f'{self.title} {self.price}'

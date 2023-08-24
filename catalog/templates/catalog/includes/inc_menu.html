@@ -62,16 +62,28 @@
     <div class="dropdown">
         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
            data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-            <strong>Пользователь</strong>
+            {% if user.is_authenticated %}
+                <img src="/media/{{ user.avatar }}" alt="/media/{{ user.avatar }}" width="32" height="32"
+                     class="rounded-circle me-2">
+                <strong>{{ user }}</strong>
+            {% else %}
+                <strong>Пользователь</strong>
+            {% endif %}
+
+
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" style="">
             <li><a class="dropdown-item" href="#">Новый заказ</a></li>
-            <li><a class="dropdown-item" href="#">Профиль</a></li>
             <li>
                 <hr class="dropdown-divider">
             </li>
-            <li><a class="dropdown-item" href="#">Выйти из профиля</a></li>
+            {% if user.is_authenticated %}
+                <li><a class="dropdown-item" href="{% url 'user:profile' %}">Профиль</a></li>
+                <li><a class="dropdown-item" href="{% url 'user:logout' %}">Выйти из профиля</a></li>
+            {% else %}
+                <li><a class="dropdown-item" href="{% url 'user:register' %}">Регистрация</a></li>
+                <li><a class="dropdown-item" href="{% url 'user:login' %}">Войти</a></li>
+            {% endif %}
         </ul>
     </div>
 </div>

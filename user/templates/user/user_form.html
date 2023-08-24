@@ -1,0 +1,44 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+    <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+        <h1 class="display-4 fw-normal text-body-emphasis">
+            {% url 'user:login' as login_url %}
+            {% url 'user:profile' as profile_url %}
+            {% url 'user:password_reset' as password_reset_url %}
+
+            {% if request.path == login_url %}
+                Авторизация
+            {% elif request.path == profile_url %}
+                Профиль
+            {% elif request.path == password_reset_url %}
+                Сброс пароля
+            {% else %}
+                Регистрация
+            {% endif %}
+        </h1>
+
+        {% if request.path == password_reset_url %}
+            Введите свою почту, мы пришлем временный пароль
+        {% endif %}
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col-auto align-items-center">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                    <p>{{ field.label_tag }}
+                        {{ field }}</p>
+                    {% if field.errors %}
+                        <div class="alert alert-danger">
+                            <p>{{ field.errors }}</p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <p>
+                    <button type="submit" class="btn btn-primary">Подтвердить</button>
+                </p>
+            </form>
+        </div>
+    </div>
+{% endblock %}

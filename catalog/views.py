@@ -1,6 +1,7 @@
 import os
 
 from django import forms
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.forms import inlineformset_factory
@@ -37,8 +38,10 @@ class ProductsListView(ListView):
     template_name = 'catalog/home.html'
 
     def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return
         context = super().get_context_data(**kwargs)
-        print(context)
+        print(self.request.user.is_authenticated)
         for product in context['object_list']:
             active_version = ProductVersion.objects.filter(product=product, is_сurrent_version=True).first()
             product.active_version = active_version
@@ -52,9 +55,26 @@ class ProductsCreateView(CreateView):
     def get_success_url(self):
         return reverse('catalog:view_product', kwargs={'pk': self.object.pk})
 
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        if form.is_valid():
+            new_product = form.save()
+            new_product.user = self.request.user
+            new_product.save()
+        return super().form_valid(form)
+
 
 class ProductsDetailView(DetailView):
     model = Products
+
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return
+        return super().get_context_data(**kwargs)
 
 
 class ProductsUpdateView(UpdateView):
@@ -63,6 +83,8 @@ class ProductsUpdateView(UpdateView):
     success_url = reverse_lazy('catalog:home')
 
     def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return
         context = super().get_context_data(**kwargs)
         # Формирование формсета
         VersionFormSet = inlineformset_factory(Products, ProductVersion, form=ProductVersionForm, extra=1)
@@ -88,11 +110,14 @@ class ProductsUpdateView(UpdateView):
             return super().form_valid(form=form)
 
 
-
-
 class ProductsDeleteView(DeleteView):
     model = Products
     success_url = reverse_lazy('catalog:home')
+
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return
+        return super().get_context_data(**kwargs)
 
 
 class BlogEntryCreateView(CreateView):

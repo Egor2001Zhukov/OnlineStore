@@ -5,6 +5,7 @@
     <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
         <h1 class="display-4 fw-normal text-body-emphasis">Главная</h1>
         <p class="fs-5 text-body-secondary">Вы находитесь на сайте предназначенном для продажи товаров.</p>
+    {% if user.is_authenticated %}
         <a href="{% url "catalog:create_product" %}" class="btn btn-outline-primary me-2">Добавить продукт</a>
         <div class="row row-cols-3 justify-content-md-center mt-5">
             {% for product in object_list %}
@@ -34,5 +35,8 @@
                 </div>
             {% endfor %}
         </div>
+    {% else %}
+        Войдите, чтобы видеть и создавать продукты
+    {% endif %}
     </div>
 {% endblock %}
