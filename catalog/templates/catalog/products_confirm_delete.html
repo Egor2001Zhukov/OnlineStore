@@ -1,0 +1,15 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+    <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+        <h1 class="display-4 fw-normal text-body-emphasis">Подтверждение удаления продукта {{ object.title }}</h1>
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col-auto align-items-center">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary bg-danger">Удалить</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

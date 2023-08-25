@@ -30,6 +30,7 @@ class ProductsForm(forms.ModelForm):
     class Meta:
         model = Products
         fields = '__all__'
+        exclude = ('user',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

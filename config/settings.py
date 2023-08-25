@@ -13,6 +13,7 @@ import os
 import os.path
 from pathlib import Path
 
+from django.urls import reverse_lazy
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -143,6 +144,7 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 AUTH_USER_MODEL = 'user.User'
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = reverse_lazy('catalog:home')
+LOGOUT_REDIRECT_URL = reverse_lazy('catalog:home')
+LOGIN_URL = reverse_lazy('user:login')
 

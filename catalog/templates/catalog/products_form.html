@@ -3,33 +3,39 @@
 {% block content %}
     <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
         <h1 class="display-4 fw-normal text-body-emphasis">Добавление записи блога</h1>
-    </div>
-    <div class="row justify-content-md-center">
-        <div class="col-auto align-items-center">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% for field in form %}
-                    <p>{{ field.label_tag }}
-                        {{ field }}</p>
-                    {% if field.errors %}
-                        <div class="alert alert-danger">
-                            <p>{{ field.errors }}</p>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-                {{ formset.management_form }}
-                {% for form in formset.forms %}
-                    {{ form.as_p }}
-                {% endfor %}
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        <p>{{ form.non_field_errors }}</p>
-                    </div>
-                {% endif %}
-                <p>
-                    <button type="submit" class="btn btn-primary">Подтвердить</button>
-                </p>
-            </form>
-        </div>
-    </div>
+        {% if user != object.user %}
+            <div class="pricing-header p-3 pb-md-4 mx-auto text-center text-danger">
+                Нет прав чтобы редактировать этот продукт
+            </div>
+        {% else %}
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-auto align-items-center">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <p>{{ field.label_tag }}
+                                {{ field }}</p>
+                            {% if field.errors %}
+                                <div class="alert alert-danger">
+                                    <p>{{ field.errors }}</p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        {{ formset.management_form }}
+                        {% for form in formset.forms %}
+                            {{ form.as_p }}
+                        {% endfor %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <p>{{ form.non_field_errors }}</p>
+                            </div>
+                        {% endif %}
+                        <p>
+                            <button type="submit" class="btn btn-primary">Подтвердить</button>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
 {% endblock %}

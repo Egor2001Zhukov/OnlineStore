@@ -1,8 +1,7 @@
 import os
 
-from django import forms
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.forms import inlineformset_factory
 from django.shortcuts import render
@@ -33,13 +32,11 @@ class ContactsView(View):
         return render(request, 'catalog/contacts.html', context={'object': contact})
 
 
-class ProductsListView(ListView):
+class ProductsListView(LoginRequiredMixin, ListView):
     model = Products
     template_name = 'catalog/home.html'
 
     def get_context_data(self, **kwargs):
-        if not self.request.user.is_authenticated:
-            return
         context = super().get_context_data(**kwargs)
         print(self.request.user.is_authenticated)
         for product in context['object_list']:
@@ -47,8 +44,11 @@ class ProductsListView(ListView):
             product.active_version = active_version
         return context
 
+    def get_queryset(self):
+        return super().get_queryset().filter(is_publish=True)
 
-class ProductsCreateView(CreateView):
+
+class ProductsCreateView(LoginRequiredMixin, CreateView):
     form_class = ProductsForm
     template_name = 'catalog/products_form.html'
 
@@ -56,9 +56,10 @@ class ProductsCreateView(CreateView):
         return reverse('catalog:view_product', kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
-        if not self.request.user.is_authenticated:
-            return
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        if not self.request.user.has_perm('catalog.set_published'):
+            context['form'].fields.pop('is_publish')
+        return context
 
     def form_valid(self, form):
         if form.is_valid():
@@ -68,7 +69,7 @@ class ProductsCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ProductsDetailView(DetailView):
+class ProductsDetailView(LoginRequiredMixin, DetailView):
     model = Products
 
     def get_context_data(self, **kwargs):
@@ -77,21 +78,29 @@ class ProductsDetailView(DetailView):
         return super().get_context_data(**kwargs)
 
 
-class ProductsUpdateView(UpdateView):
+class ProductsUpdateView(LoginRequiredMixin, UpdateView):
     model = Products
     form_class = ProductsForm
     success_url = reverse_lazy('catalog:home')
 
     def get_context_data(self, **kwargs):
-        if not self.request.user.is_authenticated:
-            return
         context = super().get_context_data(**kwargs)
-        # Формирование формсета
-        VersionFormSet = inlineformset_factory(Products, ProductVersion, form=ProductVersionForm, extra=1)
-        if self.request.method == 'POST':
-            context['formset'] = VersionFormSet(self.request.POST, instance=self.object)
+        if not self.request.user.has_perm('catalog.set_published'):
+            context['form'].fields.pop('is_publish')
+        moderators = Group.objects.get(name="moderators").user_set.all()
+        if self.request.user in moderators:
+            context['form'].fields.pop('title')
+            context['form'].fields.pop('img')
+            context['form'].fields.pop('price')
+        elif self.request.user == self.object.user:
+            # Формирование формсета
+            VersionFormSet = inlineformset_factory(Products, ProductVersion, form=ProductVersionForm, extra=1)
+            if self.request.method == 'POST':
+                context['formset'] = VersionFormSet(self.request.POST, instance=self.object)
+            else:
+                context['formset'] = VersionFormSet(instance=self.object)
         else:
-            context['formset'] = VersionFormSet(instance=self.object)
+            return
         return context
 
     def form_valid(self, form):
@@ -107,22 +116,22 @@ class ProductsUpdateView(UpdateView):
                         form.add_error(None, "Не может быть больше одной текущей версии")
                         return self.form_invalid(form=form)
             formset.save()
+            if form.cleaned_data.get('is_publish'):
+                if not self.request.user.has_perm('set_published'):
+                    form.add_error('is_publish', 'Публиковать могут только модераторы')
+                    return self.form_invalid(form)
             return super().form_valid(form=form)
 
 
-class ProductsDeleteView(DeleteView):
+class ProductsDeleteView(LoginRequiredMixin, DeleteView):
     model = Products
     success_url = reverse_lazy('catalog:home')
 
-    def get_context_data(self, **kwargs):
-        if not self.request.user.is_authenticated:
-            return
-        return super().get_context_data(**kwargs)
 
-
-class BlogEntryCreateView(CreateView):
+class BlogEntryCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     form_class = BlogEntryForm
     template_name = 'catalog/blogentry_form.html'
+    permission_required = 'catalog.add_blogentry'
 
     def form_valid(self, form):
         if form.is_valid():
@@ -139,15 +148,18 @@ class BlogEntryCreateView(CreateView):
         return reverse('catalog:view_blog_entry', kwargs={'slug': self.object.slug})
 
 
-class BlogEntryDeleteView(DeleteView):
+class BlogEntryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = BlogEntry
     success_url = reverse_lazy('catalog:blog')
+    permission_required = 'catalog.delete_blogentry'
 
 
-class BlogEntryUpdateView(UpdateView):
+class BlogEntryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = BlogEntry
     form_class = BlogEntryForm
     success_url = reverse_lazy('catalog:blog')
+    permission_required = 'catalog.change_blogentry'
+
 
     def form_valid(self, form):
         slug = slugify(form.cleaned_data.get('title') + '0')
@@ -160,7 +172,7 @@ class BlogEntryUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class BlogEntryDetailView(DetailView):
+class BlogEntryDetailView(LoginRequiredMixin, DetailView):
     model = BlogEntry
 
     def get_object(self, queryset=None):
@@ -176,7 +188,7 @@ class BlogEntryDetailView(DetailView):
         return self.object
 
 
-class BlogEntryListView(ListView):
+class BlogEntryListView(LoginRequiredMixin, ListView):
     model = BlogEntry
 
     def get_queryset(self):

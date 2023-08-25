@@ -25,7 +25,8 @@ class Products(models.Model):
     price = models.IntegerField(verbose_name='Цена')
     date_of_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     date_of_last_change = models.DateTimeField(auto_now=True, verbose_name='Дата последнего изменения')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Версия продукта', null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Создатель', null=True, blank=True)
+    is_publish = models.BooleanField(default=False, verbose_name='Опубликовано')
 
     def __str__(self):
         return f'{self.title} {self.price}'
@@ -33,6 +34,12 @@ class Products(models.Model):
     class Meta:
         verbose_name = 'продукт'
         verbose_name_plural = 'продукты'
+        permissions = [
+            (
+                'set_published',
+                'Can publish posts'
+            ),
+        ]
 
 
 class Contacts(models.Model):

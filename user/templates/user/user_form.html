@@ -23,7 +23,7 @@
         {% endif %}
     </div>
     <div class="row justify-content-md-center">
-        <div class="col-auto align-items-center">
+        <div class="col-3 align-items-center">
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% for field in form %}
@@ -37,7 +37,18 @@
                 {% endfor %}
                 <p>
                     <button type="submit" class="btn btn-primary">Подтвердить</button>
+
                 </p>
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <p>{{ form.non_field_errors }}</p>
+                    </div>
+                {% endif %}
+
+                {% if request.path == login_url %}
+                    <p><a href="{% url 'user:password_reset' %}"
+                          class="icon-link">Забыли пароль?</a></p>
+                {% endif %}
             </form>
         </div>
     </div>

@@ -2,7 +2,6 @@ import os
 import random
 import string
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
@@ -57,6 +56,14 @@ class VerifyEmailView(View):
 
 class UserLoginView(LoginView):
     form_class = UserAuthenticationForm
+
+    def form_valid(self, form):
+        user = User.objects.get(email=form.cleaned_data.get('username'))
+        if user.email_verified:
+            return super().form_valid(form)
+        else:
+            form.add_error(None, 'Подтвердите пожалуйста свою почту')
+            return self.form_invalid(form)
 
 
 class UserProfileView(UpdateView):

@@ -1,3 +1,4 @@
+{% load my_tags %}
 <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark fixed-top" style="width: 12%; height: 100vh;">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
         <svg class="bi pe-none me-2" width="40" height="32">
@@ -58,6 +59,12 @@
             </a>
         </li>
     </ul>
+    {% if user|is_content_moderator %}
+        Контент-модератор
+    {% endif %}
+    {% if user|is_moderator %}
+        Модератор
+    {% endif %}
     <hr>
     <div class="dropdown">
         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
@@ -69,8 +76,6 @@
             {% else %}
                 <strong>Пользователь</strong>
             {% endif %}
-
-
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" style="">
             <li><a class="dropdown-item" href="#">Новый заказ</a></li>
