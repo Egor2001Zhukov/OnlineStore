@@ -2,6 +2,7 @@ import os
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.core.mail import send_mail
 from django.forms import inlineformset_factory
 from django.shortcuts import render
@@ -12,7 +13,8 @@ from dotenv import load_dotenv
 from pytils.translit import slugify
 
 from catalog.forms import BlogEntryForm, ProductsForm, ProductVersionForm
-from catalog.models import Products, Contacts, BlogEntry, ProductVersion
+from catalog.models import Products, Contacts, BlogEntry, ProductVersion, Category
+from config.settings import CACHE_ENABLED
 
 load_dotenv()
 
@@ -28,7 +30,6 @@ class ContactsView(View):
         name = request.POST.get('name')
         email = request.POST.get('email')
         message = request.POST.get('message')
-        print(name, email, message)
         return render(request, 'catalog/contacts.html', context={'object': contact})
 
 
@@ -38,7 +39,6 @@ class ProductsListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(self.request.user.is_authenticated)
         for product in context['object_list']:
             active_version = ProductVersion.objects.filter(product=product, is_сurrent_version=True).first()
             product.active_version = active_version
@@ -160,7 +160,6 @@ class BlogEntryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateVie
     success_url = reverse_lazy('catalog:blog')
     permission_required = 'catalog.change_blogentry'
 
-
     def form_valid(self, form):
         slug = slugify(form.cleaned_data.get('title') + '0')
         while BlogEntry.objects.filter(slug=slug).first():
@@ -193,3 +192,26 @@ class BlogEntryListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return super().get_queryset().filter(is_publish=True)
+
+
+class CategoriesListView(LoginRequiredMixin, ListView):
+    model = Category
+
+    def get_queryset(self):
+        if CACHE_ENABLED:
+            # Проверяем включенность кеша
+            key = f'categories_list'  # Создаем ключ для хранения
+            categories_list = cache.get(key)  # Пытаемся получить данные
+            if categories_list is None:
+                # Если данные не были получены из кеша, то выбираем из БД и записываем в кеш
+                categories_list = Category.objects.all()
+                cache.set(key, categories_list)
+        else:
+            # Если кеш не был подключен, то просто обращаемся к БД
+            students_list = Category.objects.all()
+        # Возвращаем результат
+        return categories_list
+
+
+class CategoryDetailView(LoginRequiredMixin, DetailView):
+    model = Category

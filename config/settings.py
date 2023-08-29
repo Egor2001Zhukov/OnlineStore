@@ -148,3 +148,12 @@ LOGIN_REDIRECT_URL = reverse_lazy('catalog:home')
 LOGOUT_REDIRECT_URL = reverse_lazy('catalog:home')
 LOGIN_URL = reverse_lazy('user:login')
 
+CACHE_ENABLED = True
+
+if CACHE_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": "redis://127.0.0.1:6379",
+        }
+    }
